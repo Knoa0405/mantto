@@ -44,10 +44,7 @@ function NaverMap({ navigation, route = {} }) {
   // 테스트 용으로는 일단 위,경도 조작해서 만들자.
   const { category } = route.params;
 
-  const dispatch = useDispatch();
-
-  const { loginUserInfo, userList, userTalentList } = useSelector((state) => ({
-    loginUserInfo: state.LoginReducer.loginUserInfo,
+  const { userList, userTalentList } = useSelector((state) => ({
     userList: state.talentCategoriesReducer.userList,
     userTalentList: state.talentCategoriesReducer.userTalentList,
   }));
@@ -56,14 +53,24 @@ function NaverMap({ navigation, route = {} }) {
 
   const { manttiz, manttoz } = selectedTalentList;
 
-  console.log(manttiz, manttoz);
+  const manttozPoints = [];
+  const manttizPoints = [];
 
-  const points = [];
-  // 유저 정보에서 위,경도, id 만 따로 나타냄, 가공...
-  userList.forEach(({ latitude, longtitude, id }) => {
+  manttoz.forEach(({ latitude, longtitude, id }) => {
     const numberedLatitude = Number(latitude);
     const numberedLongitude = Number(longtitude);
-    points.push({
+    manttozPoints.push({
+      coords: { latitude: numberedLatitude, longitude: numberedLongitude },
+      userId: id,
+    });
+  });
+
+  console.log(manttoz);
+
+  manttiz.forEach(({ latitude, longtitude, id }) => {
+    const numberedLatitude = Number(latitude);
+    const numberedLongitude = Number(longtitude);
+    manttizPoints.push({
       coords: { latitude: numberedLatitude, longitude: numberedLongitude },
       userId: id,
     });
@@ -184,12 +191,22 @@ function NaverMap({ navigation, route = {} }) {
           showsMyLocationButton
           center={{ ...PnuPoint, zoom: 16 }}
         >
-          {points.map(({ coords, userId }) => (
+          {manttozPoints.map(({ coords, userId }) => (
             <Marker
               key={userId}
               coordinate={coords}
               onClick={() => handleClickMarker(userId)}
-              image={require('./src/images/logo.png')}
+              image={require('./src/images/manttoMarker.png')}
+              width={30}
+              height={30}
+            />
+          ))}
+          {manttizPoints.map(({ coords, userId }) => (
+            <Marker
+              key={userId}
+              coordinate={coords}
+              onClick={() => handleClickMarker(userId)}
+              image={require('./src/images/manttiMarker.png')}
               width={30}
               height={30}
             />
